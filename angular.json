@@ -33,10 +33,10 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/cantineroentrerriano/",
+              "baseHref": "/cantinero/",
               "outputPath": {
                 "base": "dist/cantinero-entrerriano",
-                "browser": "cantineroentrerriano"
+                "browser": "cantinero"
               },
               "budgets": [
                 {
