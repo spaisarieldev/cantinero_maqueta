@@ -1,0 +1,107 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+  row-gap: 4px;
+  padding-top: 8px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.readonly,
+.pack-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 4px 20px;
+
+  .label {
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  small {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.pack-preview strong {
+  font-size: 1.3rem;
+  color: var(--ce-green);
+}
+
+.photos {
+  margin-top: 16px;
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  h3 {
+    margin: 0;
+    font: var(--mat-sys-title-medium);
+
+    small {
+      color: var(--mat-sys-on-surface-variant);
+      font-weight: 400;
+    }
+  }
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.error {
+  font-size: 0.85rem;
+  color: var(--mat-sys-error);
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.photo {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f4f1ea;
+
+  &.main {
+    border-color: #e8891e;
+  }
+
+  app-image-slot {
+    aspect-ratio: 1;
+    --placeholder-bg: #eee7d8;
+  }
+
+  .photo-actions {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      --mat-icon-button-state-layer-size: 32px;
+      padding: 4px;
+    }
+
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+
+  &.main .photo-actions button:first-child mat-icon {
+    color: #e8891e;
+  }
+}

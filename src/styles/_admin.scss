@@ -1,0 +1,149 @@
+// Estilos compartidos por las pantallas del panel de gestión.
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    font-family: var(--ce-heading);
+    font-weight: 600;
+    font-size: 1.9rem;
+    color: var(--ce-green);
+  }
+
+  .subtitle {
+    margin: 4px 0 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .warn {
+    color: var(--mat-sys-error);
+  }
+
+  .low {
+    color: #a15c00;
+  }
+}
+
+.primary[mat-flat-button],
+button.primary {
+  --mat-button-filled-container-color: var(--ce-green);
+  --mat-button-filled-label-text-color: #fff;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+
+  mat-form-field {
+    width: 180px;
+    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-vertical-padding: 10px;
+  }
+
+  .search {
+    flex: 1;
+    min-width: 240px;
+  }
+}
+
+.table-wrap {
+  overflow: auto;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px 12px 0 0;
+  max-height: calc(100vh - 300px);
+  min-height: 240px;
+
+  table {
+    width: 100%;
+    --mat-table-background-color: #fff;
+  }
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    white-space: nowrap;
+    background: #fbfaf7;
+  }
+
+  .num {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .name {
+    display: block;
+    font-weight: 500;
+  }
+
+  .muted {
+    display: block;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.8rem;
+  }
+
+  .actions {
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .no-data {
+    padding: 32px;
+    text-align: center;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+mat-paginator {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: #eceae4;
+  color: #4a4a44;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.ok {
+    background: #dcefe2;
+    color: #1d5a33;
+  }
+  &.info {
+    background: #dbe9f6;
+    color: #1d4a73;
+  }
+  &.warn {
+    background: #fdebc8;
+    color: #7a4a00;
+  }
+  &.danger {
+    background: #f8d9d9;
+    color: #8a1c1c;
+  }
+  &.violet {
+    background: #e7defa;
+    color: #4b2b8a;
+  }
+}

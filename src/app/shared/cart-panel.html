@@ -1,0 +1,51 @@
+<header class="cart-header">
+  <h2>Tu carrito</h2>
+  <button mat-icon-button aria-label="Cerrar carrito" (click)="closed.emit()">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+@if (cart.lines().length === 0) {
+  <div class="empty">
+    <mat-icon>local_bar</mat-icon>
+    <p>Todavía no agregaste bebidas.</p>
+  </div>
+} @else {
+  <ul class="items">
+    @for (line of cart.lines(); track line.producto.id) {
+      <li class="item">
+        <div class="info">
+          <span class="name">{{ line.producto.nombre }}</span>
+          <span class="detail">
+            {{ line.packs }} × {{ precioPack(line.producto) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+            @if (line.producto.unidadesPorPack > 1) {
+              (pack × {{ line.producto.unidadesPorPack }})
+            }
+          </span>
+        </div>
+        <div class="qty">
+          <button mat-icon-button aria-label="Quitar uno" (click)="cart.decrement(line.producto)">
+            <mat-icon>remove</mat-icon>
+          </button>
+          <span>{{ line.packs }}</span>
+          <button
+            mat-icon-button
+            aria-label="Agregar uno"
+            [disabled]="!cart.puedeAgregar(line.producto)"
+            (click)="cart.increment(line.producto)"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </li>
+      <mat-divider />
+    }
+  </ul>
+
+  <div class="total">
+    <span>Total</span>
+    <strong>{{ cart.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+  </div>
+
+  <button mat-flat-button class="checkout" (click)="checkout()">Finalizar compra</button>
+}

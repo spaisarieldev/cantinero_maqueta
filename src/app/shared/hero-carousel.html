@@ -1,0 +1,37 @@
+<div class="stage">
+  @for (slide of slides(); track slide.src; let i = $index) {
+    <figure class="slide" [class.active]="i === index()" [attr.aria-hidden]="i !== index()">
+      <img [src]="slide.src" [alt]="slide.alt" [attr.fetchpriority]="i === 0 ? 'high' : null" />
+    </figure>
+  }
+
+  <button mat-icon-button class="arrow prev" aria-label="Imagen anterior" (click)="prev()">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button mat-icon-button class="arrow next" aria-label="Imagen siguiente" (click)="next()">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</div>
+
+<div class="dots" role="tablist">
+  @for (slide of slides(); track slide.src; let i = $index) {
+    <button
+      class="dot"
+      role="tab"
+      [class.active]="i === index()"
+      [class.paused]="paused()"
+      [attr.aria-selected]="i === index()"
+      [attr.aria-label]="slide.caption"
+      (click)="go(i)"
+    >
+      <span class="label">{{ slide.caption }}</span>
+      <span class="track">
+        @if (i === index()) {
+          @for (c of [cycle()]; track c) {
+            <span class="fill"></span>
+          }
+        }
+      </span>
+    </button>
+  }
+</div>

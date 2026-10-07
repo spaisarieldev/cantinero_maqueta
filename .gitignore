@@ -30,7 +30,10 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/.angular/cache
+/.angular
+
+# Documentación interna del backend (no se publica)
+decisiones_tecnicas_backend.pdf
 .sass-cache/
 /connect.lock
 /coverage

@@ -1,0 +1,120 @@
+<h2 mat-dialog-title>{{ esAlta ? 'Nuevo producto' : 'Editar producto' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content>
+    <div class="grid">
+      <mat-form-field class="full">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" />
+        @if (form.controls.nombre.hasError('required')) {
+          <mat-error>El nombre es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="full">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="2"></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Marca</mat-label>
+        <mat-select formControlName="marcaId">
+          @for (m of catalog.marcas; track m.id) {
+            <mat-option [value]="m.id" [disabled]="!m.activo">{{ m.nombre }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Elegí una marca</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Variante</mat-label>
+        <mat-select formControlName="varianteId">
+          <mat-option [value]="null">Sin variante</mat-option>
+          @for (v of catalog.variantes; track v.id) {
+            <mat-option [value]="v.id" [disabled]="!v.activo">{{ v.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Precio por unidad</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" min="0" formControlName="precio" />
+        <mat-error>Ingresá un precio válido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Unidades por pack</mat-label>
+        <input matInput type="number" min="1" step="1" formControlName="unidadesPorPack" />
+        <mat-hint>1 = se vende por unidad</mat-hint>
+        <mat-error>Debe ser un entero mayor o igual a 1</mat-error>
+      </mat-form-field>
+
+      @if (esAlta) {
+        <mat-form-field>
+          <mat-label>Stock inicial (unidades)</mat-label>
+          <input matInput type="number" min="0" step="1" formControlName="stock" />
+          <mat-hint>Se registra como IngresoDeStock</mat-hint>
+          <mat-error>Debe ser un entero mayor o igual a 0</mat-error>
+        </mat-form-field>
+      } @else {
+        <div class="readonly">
+          <span class="label">Stock actual</span>
+          <span>{{ producto!.stock }} unidades</span>
+          <small>Se modifica con "Ajustar stock"</small>
+        </div>
+      }
+
+      <div class="pack-preview">
+        <span class="label">Precio de venta</span>
+        <strong>{{ precioPack() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+        <small>{{ form.controls.unidadesPorPack.value > 1 ? 'por pack de ' + form.controls.unidadesPorPack.value : 'por unidad' }}</small>
+      </div>
+
+      <mat-slide-toggle formControlName="activo" class="full">Visible en la tienda (activo)</mat-slide-toggle>
+    </div>
+
+    <section class="photos">
+      <header>
+        <h3>Fotos <small>{{ fotos().length }}/{{ maxFotos }}</small></h3>
+        <button mat-stroked-button type="button" [disabled]="fotos().length >= maxFotos" (click)="fileInput.click()">
+          <mat-icon>add_photo_alternate</mat-icon>
+          Agregar fotos
+        </button>
+        <input #fileInput type="file" hidden multiple [accept]="aceptadas" (change)="agregarFotos(fileInput)" />
+      </header>
+      <p class="hint">.jpg, .png o .webp · máximo 10 MB por archivo · marcá con la estrella la foto principal</p>
+      @if (errorFoto()) {
+        <p class="error">{{ errorFoto() }}</p>
+      }
+      <div class="photo-grid">
+        @for (foto of fotos(); track foto.id; let i = $index, first = $first, last = $last) {
+          <div class="photo" [class.main]="foto.principal">
+            <app-image-slot [src]="foto.url" label="Foto" />
+            <div class="photo-actions">
+              <button mat-icon-button type="button" [matTooltip]="foto.principal ? 'Principal' : 'Marcar como principal'" (click)="marcarPrincipal(foto.id)">
+                <mat-icon>{{ foto.principal ? 'star' : 'star_border' }}</mat-icon>
+              </button>
+              <button mat-icon-button type="button" matTooltip="Mover a la izquierda" [disabled]="first" (click)="mover(i, -1)">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <button mat-icon-button type="button" matTooltip="Mover a la derecha" [disabled]="last" (click)="mover(i, 1)">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+              <button mat-icon-button type="button" matTooltip="Eliminar" (click)="quitar(foto.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <p class="hint">Todavía no hay fotos.</p>
+        }
+      </div>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancelar</button>
+    <button mat-flat-button class="primary" type="submit">{{ esAlta ? 'Crear producto' : 'Guardar cambios' }}</button>
+  </mat-dialog-actions>
+</form>

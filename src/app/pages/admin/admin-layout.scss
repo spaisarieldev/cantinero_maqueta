@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.container {
+  height: 100%;
+  background: var(--ce-cream);
+}
+
+.nav {
+  width: 248px;
+  display: flex;
+  flex-direction: column;
+  background: var(--ce-green);
+  color: #fff;
+  border-radius: 0;
+  --mat-list-list-item-label-text-color: #e6efe9;
+  --mat-list-list-item-leading-icon-color: #b9d1c3;
+  --mat-list-list-item-hover-label-text-color: #fff;
+  --mat-list-list-item-focus-label-text-color: #fff;
+  --mat-list-active-indicator-color: rgba(255, 255, 255, 0.16);
+  --mat-list-active-indicator-shape: 8px;
+
+  ::ng-deep .mat-drawer-inner-container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px 16px;
+
+  img {
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  span {
+    display: block;
+    font-family: var(--ce-script);
+    font-size: 1.1rem;
+    line-height: 1.1;
+  }
+
+  small {
+    display: block;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+}
+
+mat-nav-list {
+  padding: 0 8px;
+}
+
+.count {
+  background: var(--ce-leaf);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0 8px;
+  font-size: 0.75rem;
+  line-height: 20px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+  .rol {
+    margin-left: 6px;
+    opacity: 0.6;
+    font-size: 0.75rem;
+  }
+}
+
+.menu-email {
+  font-size: 0.8rem;
+}
+
+.content {
+  padding: 24px clamp(12px, 3vw, 32px) 48px;
+}

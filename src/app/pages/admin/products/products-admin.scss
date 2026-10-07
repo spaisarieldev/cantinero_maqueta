@@ -1,0 +1,36 @@
+.thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  --placeholder-bg: #eee7d8;
+}
+
+tr.inactive td {
+  opacity: 0.55;
+}
+
+tr.inactive td:last-child,
+tr.inactive td.mat-column-activo {
+  opacity: 1;
+}
+
+.stock-pill {
+  display: inline-block;
+  min-width: 28px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-align: center;
+  background: #dcefe2;
+  color: #1d5a33;
+  font-weight: 500;
+
+  &.low {
+    background: #fdebc8;
+    color: #7a4a00;
+  }
+
+  &.out {
+    background: #f8d9d9;
+    color: #8a1c1c;
+  }
+}

@@ -1,0 +1,123 @@
+@let p = pedido();
+
+<h2 mat-dialog-title class="title">
+  Pedido #{{ p.id }}
+  <span class="pill" [class]="claseEstado[p.estado]">{{ p.estado }}</span>
+</h2>
+
+<mat-dialog-content>
+  <p class="date">{{ p.fecha | date: "EEEE d 'de' MMMM, HH:mm 'h'" }}</p>
+
+  @if (p.requiereRevision) {
+    <div class="alert">
+      <mat-icon>report</mat-icon>
+      <div>
+        <strong>Requiere revisión.</strong>
+        Llegó un pago aprobado después de que el pedido se canceló por vencimiento. Resolvelo por fuera: pedile al
+        cliente que compre de nuevo o reembolsá desde Mercado Pago.
+      </div>
+    </div>
+  }
+
+  <div class="columns">
+    <section>
+      <h3><mat-icon>person</mat-icon> Cliente</h3>
+      <p class="strong">{{ p.cliente.nombre }}</p>
+      <p>DNI {{ p.cliente.dni }}</p>
+      <p><a [href]="'mailto:' + p.cliente.email">{{ p.cliente.email }}</a></p>
+      <p><a [href]="'tel:' + p.cliente.telefono">{{ p.cliente.telefono }}</a></p>
+    </section>
+    <section>
+      <h3><mat-icon>home_pin</mat-icon> Envío</h3>
+      <p class="strong">{{ p.cliente.direccion }}</p>
+    </section>
+  </div>
+
+  @if (p.estado === 'Pagado') {
+    <section class="shipping">
+      <h3><mat-icon>local_shipping</mat-icon> Estado de envío</h3>
+      <mat-button-toggle-group [value]="p.estadoEnvio" (change)="cambiarEnvio($event.value)" class="steps" hideSingleSelectionIndicator>
+        @for (e of estadosEnvio; track e.valor) {
+          <mat-button-toggle [value]="e.valor">
+            <mat-icon>{{ e.icono }}</mat-icon>
+            {{ e.etiqueta }}
+          </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+  }
+
+  <section>
+    <h3><mat-icon>inventory_2</mat-icon> Productos</h3>
+    <table class="items">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th class="num">Packs</th>
+          <th class="num">Unidades</th>
+          <th class="num">Precio unit.</th>
+          <th class="num">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (i of p.items; track i.productoId) {
+          <tr>
+            <td>{{ i.nombreProducto }}</td>
+            <td class="num">{{ i.unidadesPorPack > 1 ? i.cantidad / i.unidadesPorPack + ' × ' + i.unidadesPorPack : '—' }}</td>
+            <td class="num">{{ i.cantidad }}</td>
+            <td class="num">{{ i.precioUnitario | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+            <td class="num">{{ i.cantidad * i.precioUnitario | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td></td>
+          <td class="num">{{ totalUnidades(p) }}</td>
+          <td></td>
+          <td class="num">{{ p.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+
+  <section>
+    <h3><mat-icon>credit_card</mat-icon> Pagos (Mercado Pago)</h3>
+    <table class="items">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Order ID</th>
+          <th>Payment ID</th>
+          <th>Estado</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (pago of p.pagos; track pago.id) {
+          <tr>
+            <td>{{ pago.fecha | date: 'dd/MM HH:mm' }}</td>
+            <td><code>{{ pago.mpOrderId }}</code></td>
+            <td><code>{{ pago.mpPaymentId }}</code></td>
+            <td>{{ pago.estado }}</td>
+            <td>{{ pago.mpStatusDetail }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty">Sin intentos de pago</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  @if (p.estado === 'Pagado') {
+    <button mat-button class="danger" (click)="cerrar('Reembolsado')">Marcar reembolsado</button>
+    <button mat-button class="danger" (click)="cerrar('Cancelado')">Marcar cancelado</button>
+  }
+  <span class="spacer"></span>
+  <button mat-flat-button class="primary" mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>

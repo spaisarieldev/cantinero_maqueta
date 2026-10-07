@@ -1,0 +1,69 @@
+<mat-toolbar class="topbar" [style.--hero-bg]="heroBg()">
+  <a routerLink="/" class="logo">
+    <img src="images/logo.png" alt="" width="40" height="40" />
+    <span class="wordmark">Cantinero entrerriano</span>
+  </a>
+  <span class="spacer"></span>
+  <a mat-button href="#marcas">Marcas</a>
+  <a mat-button href="#nosotros">Nosotros</a>
+  <a mat-icon-button routerLink="/login" aria-label="Ingresar al panel" title="Ingresar al panel">
+    <mat-icon>account_circle</mat-icon>
+  </a>
+</mat-toolbar>
+
+<section class="hero" [style.--hero-bg]="heroBg()">
+  <div class="hero-text">
+    <img class="hero-logo" src="images/logo.png" alt="Logo de Cantinero Entrerriano" width="132" height="138" />
+    <p class="ribbon">
+      <span aria-hidden="true">⟶</span>
+      De la tierra al cóctel
+      <span aria-hidden="true">⟵</span>
+    </p>
+    <h1>Los frutos del Litoral, servidos con oficio</h1>
+    <p class="lead">
+      Bebidas con y sin alcohol hechas con ingredientes de Entre Ríos, junto a productores de la región y con
+      compromiso sustentable.
+    </p>
+    <a mat-flat-button class="cta" href="#marcas">
+      Conocé nuestras líneas
+      <mat-icon iconPositionEnd>arrow_downward</mat-icon>
+    </a>
+  </div>
+
+  <app-hero-carousel class="hero-carousel" [slides]="slides" [(index)]="slideIndex" />
+</section>
+
+<section class="brands" id="marcas">
+  <h2>Nuestras líneas</h2>
+  <p>Tres bebidas, una misma raíz entrerriana</p>
+
+  <nav class="brand-buttons">
+    @for (brand of brands; track brand.slug) {
+      <a class="brand-button" [routerLink]="['/marca', brand.slug]">
+        @if (brand.logo) {
+          <span class="circle with-logo" [style.background]="brand.color" [style.--logo-scale]="brand.logoScale ?? 1">
+            <img [src]="brand.logo" [alt]="brand.name" [style.object-position]="brand.logoPosition ?? 'center'" />
+          </span>
+        } @else {
+          <span class="circle" [style.background]="brand.color">{{ brand.name }}</span>
+        }
+        <span class="caption">Ver línea <mat-icon>arrow_forward</mat-icon></span>
+      </a>
+    }
+  </nav>
+</section>
+
+<section class="about" id="nosotros">
+  <img src="images/logo.png" alt="" width="72" height="75" />
+  <h2>Nosotros</h2>
+  <p>
+    Somos cantineros de Entre Ríos. Trabajamos con productores de la región para transformar los frutos del
+    Litoral en bebidas con identidad propia: de la tierra al cóctel.
+  </p>
+  <p class="signature">Matías Visconti · cantinero y creador de las marcas</p>
+</section>
+
+<footer class="footer">
+  <span class="wordmark">Cantinero entrerriano</span>
+  <small>Beber con moderación. Prohibida su venta a menores de 18 años.</small>
+</footer>

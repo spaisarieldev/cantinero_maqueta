@@ -1,0 +1,102 @@
+@if (brand(); as b) {
+  <mat-drawer-container
+    class="container"
+    [style.--brand]="b.color"
+    [style.--brand-soft]="b.colorSoft"
+    [style.--brand-text]="b.colorText"
+  >
+    <mat-drawer #cartDrawer mode="over" position="end" class="cart-drawer">
+      <app-cart-panel (closed)="cartDrawer.close()" />
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <mat-toolbar class="topbar">
+        <a mat-button routerLink="/" class="back">
+          <mat-icon>arrow_back</mat-icon>
+          <img class="back-logo" src="images/logo.png" alt="" width="32" height="33" />
+          <span class="wordmark">Cantinero entrerriano</span>
+        </a>
+        <span class="title">
+          @if (b.logo) {
+            <img class="title-logo" [src]="b.logo" alt="" [style.object-position]="b.logoPosition ?? 'center'" />
+          }
+          {{ b.name.toUpperCase() }}
+        </span>
+        <button
+          mat-icon-button
+          aria-label="Abrir carrito"
+          (click)="cartDrawer.toggle()"
+          [matBadge]="cart.count()"
+          [matBadgeHidden]="cart.count() === 0"
+          matBadgeColor="primary"
+        >
+          <mat-icon>shopping_cart</mat-icon>
+        </button>
+      </mat-toolbar>
+
+      <section
+        class="presentation"
+        [class.with-bg]="b.background"
+        [style.--brand-bg-image]="b.background ? 'url(' + b.background + ')' : null"
+      >
+        <app-image-slot
+          class="brand-image"
+          [src]="b.image"
+          [label]="'Imagen de marca: ' + b.name"
+          [style.--img-position]="b.imagePosition ?? 'center'"
+        />
+        <div class="presentation-text">
+          <h1>{{ b.name }}</h1>
+          <p class="tagline">{{ b.tagline }}</p>
+          @for (paragraph of b.description; track $index) {
+            <p>{{ paragraph }}</p>
+          }
+        </div>
+      </section>
+
+      <section class="catalog">
+        <h2>Catálogo</h2>
+        <div class="grid">
+          @for (producto of productos(); track producto.id) {
+            <mat-card appearance="outlined" class="product">
+              <app-image-slot class="product-image" [src]="fotoPrincipal(producto) ?? ''" label="Foto producto" />
+              <mat-card-content>
+                <h3>{{ producto.nombre }}</h3>
+                <p class="description">{{ producto.descripcion }}</p>
+                <p class="price">
+                  {{ precioPack(producto) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+                  @if (producto.unidadesPorPack > 1) {
+                    <span class="pack">pack × {{ producto.unidadesPorPack }}</span>
+                  }
+                </p>
+                @if (packsDisponibles(producto) === 0) {
+                  <p class="stock out">Sin stock</p>
+                } @else if (packsDisponibles(producto) <= 5) {
+                  <p class="stock">Últimas {{ packsDisponibles(producto) }} disponibles</p>
+                }
+              </mat-card-content>
+              <mat-card-actions>
+                <button
+                  mat-stroked-button
+                  class="add"
+                  [disabled]="!cart.puedeAgregar(producto)"
+                  (click)="addToCart(producto)"
+                >
+                  <mat-icon>add_shopping_cart</mat-icon>
+                  Agregar al carrito
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          } @empty {
+            <p>Pronto vas a encontrar productos de esta línea.</p>
+          }
+        </div>
+      </section>
+    </mat-drawer-content>
+  </mat-drawer-container>
+} @else {
+  <div class="not-found">
+    <h1>No encontramos esa marca</h1>
+    <a mat-flat-button routerLink="/">Volver al inicio</a>
+  </div>
+}

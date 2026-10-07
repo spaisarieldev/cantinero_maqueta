@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+// Tema de Angular Material 3. Más info: https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+@use 'styles/admin';
+
+// Paleta tomada de las ilustraciones de marca "De la tierra al cóctel".
+:root {
+  --ce-sage: #c2d6cb;
+  --ce-sage-deep: #7a9a8a;
+  --ce-leaf: #6e9951;
+  --ce-forest: #34483b;
+  --ce-sand: #d6c2a7;
+  --ce-earth: #807048;
+  --ce-earth-dark: #504838;
+  --ce-cream: #f5f1e8;
+
+  --ce-green: var(--ce-forest);
+
+  --ce-heading: 'Poppins', 'Roboto', sans-serif;
+  --ce-script: 'Kaushan Script', cursive;
+  --ce-hand: 'Patrick Hand', 'Comic Neue', cursive;
+}
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$green-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+  @include mat.theme-overrides(
+    (
+      primary: #34483b,
+      on-primary: #ffffff,
+      primary-container: #c2d6cb,
+      on-primary-container: #1f2d24,
+      secondary: #6e9951,
+      secondary-container: #dfe9d6,
+      tertiary: #807048,
+      tertiary-container: #ede2d1,
+      surface: #f5f1e8,
+      surface-container: #efe9dd,
+      surface-container-low: #f8f5ef,
+      surface-container-high: #ebe4d6,
+      outline: #7a9a8a,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--ce-cream);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}

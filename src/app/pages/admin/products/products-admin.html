@@ -1,0 +1,169 @@
+<header class="page-header">
+  <div>
+    <h1>Productos</h1>
+    <p class="subtitle">
+      {{ resumen().activos }} activos
+      @if (resumen().sinStock) {
+        · <span class="warn">{{ resumen().sinStock }} sin stock</span>
+      }
+      @if (resumen().stockBajo) {
+        · <span class="low">{{ resumen().stockBajo }} con stock bajo</span>
+      }
+    </p>
+  </div>
+  <button mat-flat-button class="primary" (click)="nuevo()">
+    <mat-icon>add</mat-icon>
+    Nuevo producto
+  </button>
+</header>
+
+<section class="filters">
+  <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
+    <mat-label>Buscar por nombre</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [value]="buscar()" (input)="filtrar(() => buscar.set($any($event.target).value))" />
+    @if (buscar()) {
+      <button mat-icon-button matSuffix aria-label="Limpiar" (click)="filtrar(() => buscar.set(''))">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Marca</mat-label>
+    <mat-select [value]="marcaId()" (valueChange)="filtrar(() => marcaId.set($event))">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (m of catalog.marcas; track m.id) {
+        <mat-option [value]="m.id">{{ m.nombre }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Variante</mat-label>
+    <mat-select [value]="varianteId()" (valueChange)="filtrar(() => varianteId.set($event))">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (v of catalog.variantes; track v.id) {
+        <mat-option [value]="v.id">{{ v.nombre }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Estado</mat-label>
+    <mat-select [value]="activo()" (valueChange)="filtrar(() => activo.set($event))">
+      <mat-option value="todos">Todos</mat-option>
+      <mat-option value="activos">Activos</mat-option>
+      <mat-option value="inactivos">Dados de baja</mat-option>
+    </mat-select>
+  </mat-form-field>
+</section>
+
+<div class="table-wrap">
+  <table
+    mat-table
+    [dataSource]="filas()"
+    matSort
+    [matSortActive]="sort().active"
+    [matSortDirection]="sort().direction"
+    (matSortChange)="sort.set($event)"
+  >
+    <ng-container matColumnDef="foto">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let p">
+        <app-image-slot class="thumb" [src]="fotoPrincipal(p) ?? ''" label="" />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+      <td mat-cell *matCellDef="let p">
+        <span class="name">{{ p.nombre }}</span>
+        <span class="muted">{{ p.descripcion }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="marca">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
+      <td mat-cell *matCellDef="let p">{{ catalog.marcaNombre(p.marcaId) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="variante">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Variante</th>
+      <td mat-cell *matCellDef="let p">{{ catalog.varianteNombre(p.varianteId) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="precio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">Precio unit.</th>
+      <td mat-cell *matCellDef="let p" class="num">{{ p.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="unidadesPorPack">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">Unid./pack</th>
+      <td mat-cell *matCellDef="let p" class="num">{{ p.unidadesPorPack }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="precioPack">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">Precio pack</th>
+      <td mat-cell *matCellDef="let p" class="num">
+        @if (p.unidadesPorPack > 1) {
+          {{ precioPack(p) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+        } @else {
+          <span class="muted">—</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="stock">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">Stock (unid.)</th>
+      <td mat-cell *matCellDef="let p" class="num">{{ p.stock }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="packs">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">Packs disp.</th>
+      <td mat-cell *matCellDef="let p" class="num">
+        <span class="stock-pill" [class.out]="packsDisponibles(p) === 0" [class.low]="packsDisponibles(p) > 0 && packsDisponibles(p) <= 5">
+          {{ packsDisponibles(p) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="activo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Activo</th>
+      <td mat-cell *matCellDef="let p">
+        <mat-slide-toggle
+          [checked]="p.activo"
+          (change)="setActivo(p, $event.checked)"
+          [attr.aria-label]="p.activo ? 'Dar de baja' : 'Reactivar'"
+        />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let p" class="actions">
+        <button mat-icon-button matTooltip="Ajustar stock" (click)="ajustarStock(p)">
+          <mat-icon>swap_vert</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Editar" (click)="editar(p)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnas; sticky: true"></tr>
+    <tr mat-row *matRowDef="let p; columns: columnas" [class.inactive]="!p.activo"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="no-data" [attr.colspan]="columnas.length">No hay productos que coincidan con los filtros.</td>
+    </tr>
+  </table>
+</div>
+
+<mat-paginator
+  [length]="filtrados().length"
+  [pageIndex]="page().pageIndex"
+  [pageSize]="page().pageSize"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="cambiarPagina($event)"
+  showFirstLastButtons
+/>
